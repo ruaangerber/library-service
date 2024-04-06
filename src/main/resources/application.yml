@@ -1,0 +1,10 @@
+spring:
+    application:
+        name: library-service
+
+db:
+    couchbase:
+        node-list: couchbase://localhost
+        bucket-name: library
+        bucket-username: default
+        bucket-password: ${BUCKET_PASSWORD}
