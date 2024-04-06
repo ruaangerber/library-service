@@ -11,10 +11,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.awesome.library.service.domain.common.Author;
 import com.awesome.library.service.domain.request.BookRequest;
+import com.awesome.library.service.domain.response.BookResponse;
 import com.awesome.library.service.service.LibraryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +40,7 @@ class LibraryControllerTest {
     // Negative scenarios
 
     @Test
-    void whenProvidedWithNullCreateBookRequest_thenThrowBadRequest() throws Exception {
+    void createBookRequest_whenProvidedWithNull_thenThrowBadRequest() throws Exception {
         this.mockMvc.perform(post("/").accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
@@ -46,7 +48,7 @@ class LibraryControllerTest {
     }
 
     @Test
-    void whenProvidedWithBlankBookDetailsCreateBookRequest_thenThrowBadRequest() throws Exception {
+    void createBookRequestwhenProvidedWithBlankBookDetails_thenThrowBadRequest() throws Exception {
 
         var input = BookRequest.builder().build();
 
@@ -56,10 +58,24 @@ class LibraryControllerTest {
             .andExpect(content().string(containsString("must not be blank")));
     }
 
+    @Test
+    void getBook_whenProvidedWithBlankBookDetails_thenThrowBadRequest() throws Exception {
+        this.mockMvc.perform(get("/").param("isbn", ""))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(containsString("must not be blank")));
+    }
+
+    @Test
+    void getBook_whenProvidedWithNull_thenThrowBadRequest() throws Exception {
+        this.mockMvc.perform(get("/"))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(containsString("Invalid input")));
+    }
+
     // Positive scenarios
 
     @Test
-    void whenProvidedWithBookDetailsCreateBookRequest_thenReturn204() throws Exception {
+    void createBookRequest_whenProvidedWithBookDetails_thenReturn204() throws Exception {
 
         var input = BookRequest.builder()
             .isbn("123")
@@ -77,5 +93,20 @@ class LibraryControllerTest {
 
         Mockito.verify(libraryService, Mockito.times(1)).create(Mockito.any(BookRequest.class));
     }
+
+    @Test
+    void getBook_whenProvidedWithBookDetailsCreateBookRequest_thenReturn200() throws Exception {
+     
+        var expectedResponse = BookResponse.builder().isbn("123").build();
+
+        Mockito.when(libraryService.get(Mockito.anyString())).thenReturn(expectedResponse);
+
+        this.mockMvc.perform(get("/").param("isbn", "123"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+
+        Mockito.verify(libraryService, Mockito.times(1)).get(Mockito.anyString());
+    }
+
 
 }

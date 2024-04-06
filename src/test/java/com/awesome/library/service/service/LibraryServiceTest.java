@@ -9,10 +9,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.awesome.library.service.domain.model.Book;
 import com.awesome.library.service.domain.request.BookRequest;
+import com.awesome.library.service.domain.response.BookResponse;
+import com.awesome.library.service.exception.NotFoundException;
 import com.awesome.library.service.mapping.BookMapper;
 import com.awesome.library.service.repository.BookRepository;
 import com.awesome.library.service.service.impl.LibraryServiceImpl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,8 +44,22 @@ class LibraryServiceTest {
         libraryService = null;
     }
 
+    // Negative Cases
+
     @Test
-    void whenBookingRequest_thenSave() {
+    void get_whenWrongBookingIsbn_thenThrowNotFoundException() {
+
+        when(bookRepository.findByIsbn(anyString())).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> libraryService.get("123"));
+
+        verify(bookRepository, times(1)).findByIsbn(anyString());
+    }
+
+    // Positive Cases
+
+    @Test
+    void create_whenBookingRequest_thenSave() {
         var bookRequest = BookRequest.builder().build();
         var book = Book.builder().title("Hello World").build();
 
@@ -51,6 +70,22 @@ class LibraryServiceTest {
 
         verify(bookMapper, times(1)).map(any(BookRequest.class));
         verify(bookRepository, times(1)).save(any(Book.class));
+    }
+
+    @Test
+    void get_whenBookingIsbn_thenRespond() {
+        
+        var book = Book.builder().title("Hello World").build();
+        var bookResponse = BookResponse.builder().isbn("123").build();
+
+        when(bookRepository.findByIsbn(anyString())).thenReturn(book);
+        when(bookMapper.map(any(Book.class))).thenReturn(bookResponse);
+
+        var response = libraryService.get("123");
+
+        verify(bookRepository, times(1)).findByIsbn(anyString());
+
+        assertEquals("123", response.getIsbn());
     }
 
 }
