@@ -3,8 +3,10 @@ package com.awesome.library.service.controller;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +44,27 @@ public class LibraryController {
     public ResponseEntity<BookResponse> get(final @NotBlank @RequestParam String isbn) {
 
         return ResponseEntity.ok(libraryService.get(isbn));
+    }
+
+    @PutMapping(
+        value = "/",
+        consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<BookResponse> put(final @Valid @RequestBody BookRequest request) {
+
+        libraryService.put(request);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(
+        value = "/"
+    )
+    public ResponseEntity<BookResponse> delete(final @NotBlank @RequestParam String isbn) {
+
+        libraryService.delete(isbn);
+
+        return ResponseEntity.noContent().build();
     }
     
 }

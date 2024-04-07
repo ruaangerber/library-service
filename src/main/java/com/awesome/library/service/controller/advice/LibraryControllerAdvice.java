@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.awesome.library.service.exception.AlreadyExistsException;
+import com.awesome.library.service.exception.NotFoundException;
+
 import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
@@ -57,6 +60,27 @@ public class LibraryControllerAdvice {
     public String handleValidationExceptions(MissingServletRequestParameterException ex) {
 
         return "Invalid input";
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(AlreadyExistsException.class)
+    public String handleValidationExceptions(AlreadyExistsException ex) {
+
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(NotFoundException.class)
+    public String handleValidationExceptions(NotFoundException ex) {
+
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public String handleValidationExceptions(Exception ex) {
+
+        return "Internal server error";
     }
 
 }

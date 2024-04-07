@@ -9,4 +9,8 @@ public interface LibraryService {
 
     BookResponse get(String isbn);
 
+    void put(BookRequest book);
+
+    void delete(String isbn);
+
 }
