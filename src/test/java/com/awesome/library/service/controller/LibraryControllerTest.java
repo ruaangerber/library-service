@@ -163,13 +163,33 @@ class LibraryControllerTest {
     void search_whenTitleIsProvided_thenReturn200() throws Exception {
         var expectedResponse = List.of(BookResponse.builder().isbn("123").build());
 
-        Mockito.when(libraryService.search(Mockito.anyString())).thenReturn(expectedResponse);
+        Mockito.when(libraryService.search(Mockito.anyString(), 
+            Mockito.isNull(), Mockito.isNull())).thenReturn(expectedResponse);
 
-        this.mockMvc.perform(get("/search").param("search", "hello world"))
+        this.mockMvc.perform(get("/search").param("query", "hello world"))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
 
-        Mockito.verify(libraryService, Mockito.times(1)).search(Mockito.anyString());
+        Mockito.verify(libraryService, Mockito.times(1))
+            .search(Mockito.anyString(), Mockito.isNull(), Mockito.isNull());
+    }
+
+    @Test
+    void search_whenTitleAndPageAndSizeIsProvided_thenReturn200() throws Exception {
+        var expectedResponse = List.of(BookResponse.builder().isbn("123").build(), BookResponse.builder().isbn("124").build());
+
+        Mockito.when(libraryService.search(Mockito.anyString(), 
+            Mockito.anyInt(), Mockito.anyInt())).thenReturn(List.of(expectedResponse.get(1)));
+
+        this.mockMvc.perform(get("/search")
+            .param("query", "hello world")
+            .param("page", "1")
+            .param("size", "1"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(List.of(expectedResponse.get(1)))));
+
+        Mockito.verify(libraryService, Mockito.times(1))
+            .search(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
     }
 
 

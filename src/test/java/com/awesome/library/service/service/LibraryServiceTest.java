@@ -169,15 +169,32 @@ class LibraryServiceTest {
         var books = List.of(Book.builder().isbn("123").title("Hello World").build());
         var bookResponse = List.of(BookResponse.builder().isbn("123").build());
 
-        when(bookRepository.findByAny(anyString())).thenReturn(books);
+        when(bookRepository.findByAny(anyString(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(books);
         when(bookMapper.map(any(List.class))).thenReturn(bookResponse);
 
-        var response = libraryService.search("123");
+        var response = libraryService.search("123", null, null);
 
-        verify(bookRepository, times(1)).findByAny(anyString());
+        verify(bookRepository, times(1))
+            .findByAny(anyString(), Mockito.anyInt(), Mockito.anyInt());
 
         assertEquals(1, response.size());
         assertEquals("123", response.get(0).getIsbn());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void search_whenTitleAndPage1ProvidedAndExists_thenReturnEmpty() {
+        var books = List.of(Book.builder().isbn("123").title("Hello World").build());
+
+        when(bookRepository.findByAny(anyString(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(books);
+        when(bookMapper.map(any(List.class))).thenReturn(List.of());
+
+        var response = libraryService.search("123", 1, 1);
+
+        verify(bookRepository, times(1))
+            .findByAny(anyString(), Mockito.anyInt(), Mockito.anyInt());
+
+        assertEquals(0, response.size());
     }
 
 }

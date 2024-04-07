@@ -16,13 +16,16 @@ import com.awesome.library.service.exception.AlreadyExistsException;
 import com.awesome.library.service.exception.NotFoundException;
 
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
 public class LibraryControllerAdvice {
     
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public String handleValidationExceptions(HttpMessageNotReadableException ex) {
+        log.error(ex.getMessage(), ex);
 
         return "Invalid input";
     }
@@ -30,6 +33,8 @@ public class LibraryControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        log.error(ex.getMessage(), ex);
+
         var errors = new HashMap<String, String>();
         
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -44,6 +49,8 @@ public class LibraryControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public Map<String, String> handleValidationExceptions(ConstraintViolationException ex) {
+        log.error(ex.getMessage(), ex);
+
         var errors = new HashMap<String, String>();
         
         ex.getConstraintViolations().forEach((error) -> {
@@ -58,6 +65,7 @@ public class LibraryControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public String handleValidationExceptions(MissingServletRequestParameterException ex) {
+        log.error(ex.getMessage(), ex);
 
         return "Invalid input";
     }
@@ -65,6 +73,7 @@ public class LibraryControllerAdvice {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(AlreadyExistsException.class)
     public String handleValidationExceptions(AlreadyExistsException ex) {
+        log.error(ex.getMessage(), ex);
 
         return ex.getMessage();
     }
@@ -72,15 +81,17 @@ public class LibraryControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(NotFoundException.class)
     public String handleValidationExceptions(NotFoundException ex) {
+        log.error(ex.getMessage(), ex);
 
         return ex.getMessage();
     }
 
-    // @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    // @ExceptionHandler(Exception.class)
-    // public String handleValidationExceptions(Exception ex) {
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public String handleValidationExceptions(Exception ex) {
+        log.error(ex.getMessage(), ex);
 
-    //     return "Internal server error";
-    // }
+        return "Internal server error";
+    }
 
 }

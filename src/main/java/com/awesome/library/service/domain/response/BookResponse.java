@@ -1,6 +1,5 @@
 package com.awesome.library.service.domain.response;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.awesome.library.service.domain.common.Author;

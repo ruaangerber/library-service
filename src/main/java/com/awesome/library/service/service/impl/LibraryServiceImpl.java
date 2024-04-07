@@ -25,6 +25,10 @@ public class LibraryServiceImpl implements LibraryService {
     private final BookMapper bookMapper;
 
     private final BookRepository bookRepository;
+
+    private static final Integer DEFAULT_PAGE = 0;
+
+    private static final Integer DEFAULT_SIZE = 100;
     
     @Override
     public void create(final BookRequest bookRequest) {
@@ -88,10 +92,13 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public List<BookResponse> search(final String search) {
-        log.info("Search book: [{}]", search);
+    public List<BookResponse> search(final String query, final Integer page, final Integer size) {
+        log.info("Search query: [{}]; page: [{}]; size: [{}]", query, page, size);
 
-        return bookMapper.map(bookRepository.findByAny(search));
+        var defaultPage = Objects.isNull(page) ? DEFAULT_PAGE : page;
+        var defaultSize = Objects.isNull(size) ? DEFAULT_SIZE : size;
+
+        return bookMapper.map(bookRepository.findByAny(query, defaultPage, defaultSize));
     }
     
 }

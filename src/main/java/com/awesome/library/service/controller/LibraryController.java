@@ -73,9 +73,10 @@ public class LibraryController {
         value = "/search",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<BookResponse>> search(final @RequestParam String search) {
+    public ResponseEntity<List<BookResponse>> search(final @RequestParam String query, 
+        final @RequestParam(required=false) Integer page, @RequestParam(required=false) Integer size) {
 
-        return ResponseEntity.ok(libraryService.search(search));
+        return ResponseEntity.ok(libraryService.search(query, page, size));
     }
     
 }

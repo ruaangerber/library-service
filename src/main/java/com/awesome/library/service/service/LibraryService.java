@@ -15,6 +15,6 @@ public interface LibraryService {
 
     void delete(String isbn);
 
-    List<BookResponse> search(String search);
+    List<BookResponse> search(String query, Integer page, Integer size);
 
 }

@@ -1,6 +1,5 @@
 package com.awesome.library.service.domain.model;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
