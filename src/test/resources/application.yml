@@ -1,0 +1,6 @@
+db:
+    couchbase:
+        node-list: couchbase://localhost
+        bucket-name: healthdata
+        bucket-username: default
+        bucket-password: default
