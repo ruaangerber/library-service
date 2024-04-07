@@ -76,11 +76,11 @@ public class LibraryControllerAdvice {
         return ex.getMessage();
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public String handleValidationExceptions(Exception ex) {
+    // @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    // @ExceptionHandler(Exception.class)
+    // public String handleValidationExceptions(Exception ex) {
 
-        return "Internal server error";
-    }
+    //     return "Internal server error";
+    // }
 
 }

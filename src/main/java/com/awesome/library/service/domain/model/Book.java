@@ -43,7 +43,7 @@ public class Book {
 
     @Field
     @NotNull
-    private LocalDate publishDate;
+    private Integer publishYear;
 
     @Field
     @NotNull

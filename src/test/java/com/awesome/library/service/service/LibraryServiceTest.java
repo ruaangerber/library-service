@@ -25,6 +25,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 class LibraryServiceTest {
 
@@ -159,6 +161,23 @@ class LibraryServiceTest {
 
         verify(bookRepository, times(1)).findByIsbn(anyString());
         verify(bookRepository, times(1)).delete(any(Book.class));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void search_whenTitleProvidedAndExists_thenReturn() {
+        var books = List.of(Book.builder().isbn("123").title("Hello World").build());
+        var bookResponse = List.of(BookResponse.builder().isbn("123").build());
+
+        when(bookRepository.findByAny(anyString())).thenReturn(books);
+        when(bookMapper.map(any(List.class))).thenReturn(bookResponse);
+
+        var response = libraryService.search("123");
+
+        verify(bookRepository, times(1)).findByAny(anyString());
+
+        assertEquals(1, response.size());
+        assertEquals("123", response.get(0).getIsbn());
     }
 
 }

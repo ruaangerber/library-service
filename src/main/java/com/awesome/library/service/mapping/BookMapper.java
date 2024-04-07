@@ -1,6 +1,7 @@
 package com.awesome.library.service.mapping;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,11 +18,8 @@ public interface BookMapper {
     @Mapping(target="created", expression="java(ZonedDateTime.now())")
     public abstract Book map(BookRequest input);
 
-    @Mapping(target="isbn", source="isbn")
-    @Mapping(target="title", source="title")
-    @Mapping(target="description", source="description")
-    @Mapping(target="authors", source="authors")
-    @Mapping(target="publishDate", source="publishDate")
     public abstract BookResponse map(Book input);
+
+    public abstract List<BookResponse> map(List<Book> input);
 
 }

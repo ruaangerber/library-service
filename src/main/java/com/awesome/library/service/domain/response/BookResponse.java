@@ -28,6 +28,6 @@ public class BookResponse {
 
     private List<Author> authors;
 
-    private LocalDate publishDate;
+    private Integer publishYear;
 
 }

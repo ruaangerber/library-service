@@ -1,6 +1,7 @@
 package com.awesome.library.service.service.impl;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class LibraryServiceImpl implements LibraryService {
         var searchForExistingBook = bookRepository.findByIsbn(book.getIsbn());
 
         if (Objects.nonNull(searchForExistingBook)) {
-            throw new AlreadyExistsException("ISBN [{}] already exists in library".formatted(book.getIsbn()));
+            throw new AlreadyExistsException("ISBN [%s] already exists in library".formatted(book.getIsbn()));
         }
 
         bookRepository.save(book);
@@ -47,7 +48,7 @@ public class LibraryServiceImpl implements LibraryService {
         var book = bookRepository.findByIsbn(isbn);
 
         if (Objects.isNull(book)) {
-            throw new NotFoundException("Book with ISBN [{}] not found in library".formatted(isbn));
+            throw new NotFoundException("Book with ISBN [%s] not found in library".formatted(isbn));
         }
 
         log.info("Found book matching ISBN [{}]: [{}]", isbn, book);
@@ -64,7 +65,7 @@ public class LibraryServiceImpl implements LibraryService {
         var searchForExistingBook = bookRepository.findByIsbn(book.getIsbn());
 
         if (Objects.isNull(searchForExistingBook)) {
-            throw new NotFoundException("ISBN [{}] not found in library".formatted(book.getIsbn()));
+            throw new NotFoundException("ISBN [%s] not found in library".formatted(book.getIsbn()));
         }
 
         book.setId(searchForExistingBook.getId());
@@ -80,10 +81,17 @@ public class LibraryServiceImpl implements LibraryService {
         var searchForExistingBook = bookRepository.findByIsbn(isbn);
 
         if (Objects.isNull(searchForExistingBook)) {
-            throw new NotFoundException("ISBN [{}] not found in library".formatted(isbn));
+            throw new NotFoundException("ISBN [%s] not found in library".formatted(isbn));
         }
 
         bookRepository.delete(searchForExistingBook);
+    }
+
+    @Override
+    public List<BookResponse> search(final String search) {
+        log.info("Search book: [{}]", search);
+
+        return bookMapper.map(bookRepository.findByAny(search));
     }
     
 }

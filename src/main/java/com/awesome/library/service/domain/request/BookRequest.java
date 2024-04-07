@@ -1,6 +1,5 @@
 package com.awesome.library.service.domain.request;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.awesome.library.service.domain.common.Author;
@@ -34,6 +33,6 @@ public class BookRequest {
     private List<Author> authors;
 
     @NotNull
-    private LocalDate publishDate;
+    private Integer publishYear;
 
 }

@@ -1,5 +1,7 @@
 package com.awesome.library.service.controller;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -65,6 +67,15 @@ public class LibraryController {
         libraryService.delete(isbn);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(
+        value = "/search",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<BookResponse>> search(final @RequestParam String search) {
+
+        return ResponseEntity.ok(libraryService.search(search));
     }
     
 }

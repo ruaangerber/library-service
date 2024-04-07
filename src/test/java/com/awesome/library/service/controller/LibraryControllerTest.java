@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.awesome.library.service.domain.common.Author;
 import com.awesome.library.service.domain.request.BookRequest;
 import com.awesome.library.service.domain.response.BookResponse;
-import com.awesome.library.service.exception.NotFoundException;
 import com.awesome.library.service.service.LibraryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,7 +23,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @WebMvcTest
@@ -97,13 +95,13 @@ class LibraryControllerTest {
     // Positive scenarios
 
     @Test
-    void createBookRequest_whenProvidedWithBookDetails_thenReturn204() throws Exception {
+    void create_whenProvidedWithBookDetails_thenReturn204() throws Exception {
 
         var input = BookRequest.builder()
             .isbn("123")
             .title("Hello World")
             .description("Some description")
-            .publishDate(LocalDate.parse("2024-04-05"))
+            .publishYear(1234)
             .authors(List.of(Author.builder().name("John Doe").build()))
             .build();
 
@@ -117,7 +115,7 @@ class LibraryControllerTest {
     }
 
     @Test
-    void getBook_whenProvidedWithBookDetailsCreateBookRequest_thenReturn200() throws Exception {
+    void get_whenProvidedWithBookDetailsCreateBookRequest_thenReturn200() throws Exception {
      
         var expectedResponse = BookResponse.builder().isbn("123").build();
 
@@ -131,13 +129,13 @@ class LibraryControllerTest {
     }
 
     @Test
-    void putBookRequest_whenProvidedWithBookDetails_thenReturn204() throws Exception {
+    void put_whenProvidedWithBookDetails_thenReturn204() throws Exception {
 
         var input = BookRequest.builder()
             .isbn("123")
             .title("Hello World")
             .description("Some description")
-            .publishDate(LocalDate.parse("2024-04-05"))
+            .publishYear(1234)
             .authors(List.of(Author.builder().name("John Doe").build()))
             .build();
 
@@ -151,7 +149,7 @@ class LibraryControllerTest {
     }
 
     @Test
-    void deleteBookRequest_whenProvidedWithBookDetails_thenReturn204() throws Exception {
+    void delete_whenProvidedWithBookDetails_thenReturn204() throws Exception {
 
         Mockito.doNothing().when(libraryService).delete(Mockito.anyString());
 
@@ -159,6 +157,19 @@ class LibraryControllerTest {
             .andExpect(status().isNoContent());
 
         Mockito.verify(libraryService, Mockito.times(1)).delete(Mockito.anyString());
+    }
+
+    @Test
+    void search_whenTitleIsProvided_thenReturn200() throws Exception {
+        var expectedResponse = List.of(BookResponse.builder().isbn("123").build());
+
+        Mockito.when(libraryService.search(Mockito.anyString())).thenReturn(expectedResponse);
+
+        this.mockMvc.perform(get("/search").param("search", "hello world"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+
+        Mockito.verify(libraryService, Mockito.times(1)).search(Mockito.anyString());
     }
 
 
