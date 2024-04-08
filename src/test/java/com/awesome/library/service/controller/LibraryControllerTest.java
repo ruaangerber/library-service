@@ -42,7 +42,7 @@ class LibraryControllerTest {
 
     @Test
     void createBookRequest_whenProvidedWithNull_thenThrowBadRequest() throws Exception {
-        this.mockMvc.perform(post("/").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/book").accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string(containsString("Invalid input")));
@@ -53,7 +53,7 @@ class LibraryControllerTest {
 
         var input = BookRequest.builder().build();
 
-        this.mockMvc.perform(post("/").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/book").accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(input)).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string(containsString("must not be blank")));
@@ -61,7 +61,7 @@ class LibraryControllerTest {
 
     @Test
     void putBookRequest_whenProvidedWithNull_thenThrowBadRequest() throws Exception {
-        this.mockMvc.perform(put("/").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(put("/book").accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string(containsString("Invalid input")));
@@ -72,7 +72,7 @@ class LibraryControllerTest {
 
         var input = BookRequest.builder().build();
 
-        this.mockMvc.perform(put("/").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(put("/book").accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(input)).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string(containsString("must not be blank")));
@@ -80,14 +80,14 @@ class LibraryControllerTest {
 
     @Test
     void getBook_whenProvidedWithBlankBookDetails_thenThrowBadRequest() throws Exception {
-        this.mockMvc.perform(get("/").param("isbn", ""))
+        this.mockMvc.perform(get("/book").param("isbn", ""))
             .andExpect(status().isBadRequest())
             .andExpect(content().string(containsString("must not be blank")));
     }
 
     @Test
     void getBook_whenProvidedWithNull_thenThrowBadRequest() throws Exception {
-        this.mockMvc.perform(get("/"))
+        this.mockMvc.perform(get("/book"))
             .andExpect(status().isBadRequest())
             .andExpect(content().string(containsString("Invalid input")));
     }
@@ -107,7 +107,7 @@ class LibraryControllerTest {
 
         Mockito.doNothing().when(libraryService).create(Mockito.any(BookRequest.class));
 
-        this.mockMvc.perform(post("/").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/book").accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(input)).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
@@ -121,7 +121,7 @@ class LibraryControllerTest {
 
         Mockito.when(libraryService.get(Mockito.anyString())).thenReturn(expectedResponse);
 
-        this.mockMvc.perform(get("/").param("isbn", "123"))
+        this.mockMvc.perform(get("/book").param("isbn", "123"))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
 
@@ -141,7 +141,7 @@ class LibraryControllerTest {
 
         Mockito.doNothing().when(libraryService).put(Mockito.any(BookRequest.class));
 
-        this.mockMvc.perform(put("/").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(put("/book").accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(input)).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
@@ -153,7 +153,7 @@ class LibraryControllerTest {
 
         Mockito.doNothing().when(libraryService).delete(Mockito.anyString());
 
-        this.mockMvc.perform(delete("/").param("isbn", "123"))
+        this.mockMvc.perform(delete("/book").param("isbn", "123"))
             .andExpect(status().isNoContent());
 
         Mockito.verify(libraryService, Mockito.times(1)).delete(Mockito.anyString());
@@ -166,7 +166,7 @@ class LibraryControllerTest {
         Mockito.when(libraryService.search(Mockito.anyString(), 
             Mockito.isNull(), Mockito.isNull())).thenReturn(expectedResponse);
 
-        this.mockMvc.perform(get("/search").param("query", "hello world"))
+        this.mockMvc.perform(get("/book/search").param("query", "hello world"))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
 
@@ -181,7 +181,7 @@ class LibraryControllerTest {
         Mockito.when(libraryService.search(Mockito.anyString(), 
             Mockito.anyInt(), Mockito.anyInt())).thenReturn(List.of(expectedResponse.get(1)));
 
-        this.mockMvc.perform(get("/search")
+        this.mockMvc.perform(get("/book/search")
             .param("query", "hello world")
             .param("page", "1")
             .param("size", "1"))
