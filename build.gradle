@@ -11,6 +11,10 @@ java {
 	sourceCompatibility = '21'
 }
 
+springBoot {
+    mainClass = 'com.awesome.library.service.LibraryServiceApplication'
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor

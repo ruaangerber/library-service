@@ -4,16 +4,19 @@ This is a demo library service used to save, read, update, and delete books from
 
 ### Installation
 1. Clone the project.
-2. Create a new bucket in Couchbase called `library`.
-3. Run `./gradlew build` to execute tests and build the artifact.
-4. Run the following command and replace `<BUCKET_PASSWORD>` with the password to your Couchbase database: 
-`java -DBUCKET_PASSWORD="<BUCKET_PASSWORD>" -jar ./build/libs/library-service-0.0.1-SNAPSHOT.jar`
-5. Use a REST client such as Postman to call the endpoints.
+2. Run `docker-compose up` to spin up the service as well as a Couchbase instance.
+3. The service will raise connection exceptions while couchbase is being initialised. Give it a minute.
+4. The following log entry indicates that Couchbase is initialised and we were able to connect: 
+`[com.couchbase.core][BucketOpenedEvent][10s] Opened bucket "library"`
+5. The following log entry indicates that the Couchbase initialiser service exited correctly and we can now use the service:
+`couchbase-server-init exited with code 0`
+6. Use a REST client such as Postman to call the endpoints.
+7. Press `Ctrl + C` and run `docker-compose down` to stop the service and database.
 
 ### Endpoints
 Visit the OpenAPI webpage at `http://localhost:8080/swagger-ui/index.html` after starting the application locally to see the full documentation.
 
-#### POST /
+#### POST /book
 This endpoint creates a new book.
 
 Example:
@@ -33,7 +36,7 @@ curl --location --request POST 'http://localhost:8080/book' \
 }'
 ```
 
-#### GET /
+#### GET /book
 This endpoint returns a book by looking for it with its ISBN.
 
 Example:
@@ -41,7 +44,7 @@ Example:
 curl --location --request GET 'http://localhost:8080/book?isbn=125'
 ```
 
-#### PUT /
+#### PUT /book
 This endpoint updates an existing book. Provide all the fields as this will overwrite all fields.
 
 Example:
@@ -61,7 +64,7 @@ curl --location --request PUT 'http://localhost:8080/book' \
 }'
 ```
 
-#### DELETE /
+#### DELETE /book
 This endpoint deletes an existing book by looking for it with its ISBN.
 
 Example:
