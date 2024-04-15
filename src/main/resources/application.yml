@@ -4,7 +4,7 @@ spring:
 
 db:
     couchbase:
-        node-list: couchbase://localhost
+        node-list: ${NODE_URL}
         bucket-name: library
         bucket-username: default
         bucket-password: ${BUCKET_PASSWORD}
